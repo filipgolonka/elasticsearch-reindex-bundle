@@ -24,7 +24,7 @@ Your application has to use alias name, not index name directly.
 
 ## Installation
 
-* `composer require filipgolonka/elasticsearch-reindex.bundle`
+* `composer require filipgolonka/elasticsearch-reindex-bundle`
 * add following lines to `app/AppKernel.php`
 
 ```
