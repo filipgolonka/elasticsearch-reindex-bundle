@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="ElasticsearchReindexBundle">
+    <description>SaEventCalendar coding standard</description>
+    <file>features</file>
+    <file>src</file>
+    <rule ref="PSR1"/>
+    <rule ref="PSR2"/>
+    <rule ref="vendor/ralfmaxxx/phpcs_rules/src/Standards/SA"/>
+</ruleset>

@@ -1,0 +1,25 @@
+sudo: false
+
+language: php
+
+env:
+    global:
+        - ELASTICSEARCH_URL=http://localhost:9200
+
+php:
+    - '7.0'
+    - '7.1'
+    - 'nightly'
+
+before_install:
+    - wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-2.2.1.deb
+    - sudo dpkg -i elasticsearch-2.2.1.deb
+
+install:
+    - composer install --no-interaction
+
+script:
+    - bin/phing all
+
+notifications:
+    email: false

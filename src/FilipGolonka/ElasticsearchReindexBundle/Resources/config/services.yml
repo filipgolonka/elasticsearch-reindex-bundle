@@ -1,0 +1,27 @@
+services:
+    filipgolonka.elasticsearch_reindex.config:
+        class: FilipGolonka\ElasticsearchReindexBundle\Config\ElasticSearchConfig
+        arguments:
+            - '%filipgolonka.elasticsearch_reindex.param.alias_name%'
+            - '%filipgolonka.elasticsearch_reindex.param.index_type%'
+
+    filipgolonka.elasticsearch_reindex.service.index:
+        class: FilipGolonka\ElasticsearchReindexBundle\Service\IndexService
+        arguments:
+            - '@filipgolonka.elasticsearch_reindex.elasticsearch.client'
+            - '@filipgolonka.elasticsearch_reindex.config'
+
+    filipgolonka.elasticsearch_reindex.service.setting:
+        class: FilipGolonka\ElasticsearchReindexBundle\Service\SettingService
+        arguments:
+            - '@filipgolonka.elasticsearch_reindex.elasticsearch.client'
+            - '@filipgolonka.elasticsearch_reindex.config'
+
+    filipgolonka.elasticsearch_reindex.command:
+        class: FilipGolonka\ElasticsearchReindexBundle\Command\ReindexCommand
+        arguments:
+            - '@filipgolonka.elasticsearch_reindex.service.index'
+            - '@filipgolonka.elasticsearch_reindex.service.setting'
+            - '%filipgolonka.elasticsearch_reindex.param.reindex_command_name%'
+        tags:
+            - { name: console.command }

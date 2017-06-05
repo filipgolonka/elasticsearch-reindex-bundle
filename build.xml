@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Elasticsearch reindex bundle" default="all">
+    <target name="phpcs" description="runs phpcs">
+        <exec executable="bin/phpcs" passthru="true" checkreturn="true">
+            <arg line="--report=emacs
+                --standard=ruleset.xml
+                --extensions=php"/>
+        </exec>
+    </target>
+
+    <target name="phpmd" description="runs phpmd">
+        <exec executable="bin/phpmd" passthru="true" checkreturn="true">
+            <arg line="src,features
+                text
+                phpmd.xml
+                --suffixes php"/>
+        </exec>
+    </target>
+
+    <target name="phpcpd" description="runs phpcpd">
+        <exec executable="bin/phpcpd" passthru="true">
+            <arg line="src features"/>
+        </exec>
+    </target>
+
+    <target name="phpspec" description="runs phpspec tests">
+        <exec executable="bin/phpspec" passthru="true" checkreturn="true">
+            <arg line="run
+                --format=pretty"/>
+        </exec>
+    </target>
+
+    <target name="behat" description="runs behat tests">
+        <exec executable="bin/behat" passthru="true" checkreturn="true"/>
+    </target>
+
+    <target name="tests" depends="phpspec,behat" description="runs behat and phpspec tests"/>
+
+    <target name="quality" depends="phpmd,phpcpd,phpcs" description="runs all quality tools: phpmd,phpcs,phpcpd and check-behat-features"/>
+
+    <target name="all" depends="quality,tests" description="runs quality tools and tests"/>
+</project>

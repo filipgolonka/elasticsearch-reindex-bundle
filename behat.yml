@@ -1,0 +1,9 @@
+default:
+    autoload:
+        - %paths.base%/features/bootstrap/
+    suites:
+        default:
+            filters:
+                tags: ~@wip
+            contexts:
+                - FilipGolonka\ElasticsearchReindexBundle\FeatureContext
