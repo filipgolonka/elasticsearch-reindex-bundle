@@ -13,7 +13,7 @@ php:
 
 before_install:
     - wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/2.4.5/elasticsearch-2.4.5.zip
-    - tar -xzf elasticsearch-2.4.5.tar.gz
+    - unzip elasticsearch-2.4.5.zip
     - ./elasticsearch-2.4.5/bin/elasticsearch &
 
 install:
