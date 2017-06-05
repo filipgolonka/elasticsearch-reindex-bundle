@@ -2,7 +2,7 @@
 
 Allows to reindex data in zero-downtime mode. 
 
-![https://travis-ci.org/filipgolonka/elasticsearch-reindex-bundle.svg?branch=master](https://travis-ci.org/filipgolonka/elasticsearch-reindex-bundle.svg?branch=master)
+![https://travis-ci.org/filipgolonka/elasticsearch-reindex-bundle](https://travis-ci.org/filipgolonka/elasticsearch-reindex-bundle.svg?branch=master)
 
 ## How is it working?
 
