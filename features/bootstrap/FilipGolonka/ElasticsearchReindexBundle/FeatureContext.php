@@ -134,10 +134,13 @@ class FeatureContext implements Context
 
         foreach ($config->getStrings() as $line) {
             $line = explode('=', $line);
-            if ($line[0] == 'mapping') {
-                $mapping = json_decode($line[1], true);
-            } elseif ($line[0] == 'settings') {
-                $settings = json_decode($line[1], true);
+            $key = array_shift($line);
+            $value = implode('=', $line);
+
+            if ($key == 'mapping') {
+                $mapping = json_decode($value, true);
+            } elseif ($key == 'settings') {
+                $settings = json_decode($value, true);
             }
         }
 

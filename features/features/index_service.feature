@@ -7,7 +7,7 @@ Feature: Index service
         Given I create index service
         When I create "new-index" index with:
         """
-        mapping={"properties":{"id":{"type": "string"}}}
+        mapping={"dynamic": "environment == 'dev' ? 'strict' : false", "properties":{"id":{"type": "string"}}}
         settings={"number_of_shards":"1"}
         """
         Then index "new-index" should exists
@@ -16,7 +16,7 @@ Feature: Index service
         Given I create index service
         And I create "new-index" index with:
         """
-        mapping={"properties":{"id":{"type": "string"}}}
+        mapping={"dynamic": "environment == 'dev' ? 'strict' : false", "properties":{"id":{"type": "string"}}}
         settings={"number_of_shards":"1"}
         """
         When I remove "new-index" index
@@ -27,12 +27,12 @@ Feature: Index service
         And I remove "index-name" index
         And I create "recent-index" index with:
         """
-        mapping={"properties":{"id":{"type": "string"}}}
+        mapping={"dynamic": "environment == 'dev' ? 'strict' : false", "properties":{"id":{"type": "string"}}}
         settings={"number_of_shards":"1"}
         """
         And I create "more-recent-index" index with:
         """
-        mapping={"properties":{"id":{"type": "string"}}}
+        mapping={"dynamic": "environment == 'dev' ? 'strict' : false", "properties":{"id":{"type": "string"}}}
         settings={"number_of_shards":"1"}
         """
         And I create alias "index-name" to "recent-index" index

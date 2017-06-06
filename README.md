@@ -61,6 +61,7 @@ where:
 ```
 parameters:
     elasticsearch_mapping:
+        dynamic: "environment == 'dev' ? 'strict' : false"
         properties:
             id:
                 type: string

@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ReindexCommand extends ContainerAwareCommand
 {
@@ -47,34 +48,62 @@ class ReindexCommand extends ContainerAwareCommand
 
         $output->writeln(sprintf('Current index name is "%s"', $currentIndex), OutputInterface::VERBOSITY_VERBOSE);
 
-        $container = $this->getContainer();
-        $indexNameTemplate = $container->getParameter('filipgolonka.elasticsearch_reindex.param.index_name_template');
-        $mapping = $container->getParameter('filipgolonka.elasticsearch_reindex.param.mapping');
-        $settings = $container->getParameter('filipgolonka.elasticsearch_reindex.param.settings');
+        $environment = $this->getEnvironment($input);
 
-        $newIndex = $this->indexService->createIndex($indexNameTemplate, $mapping, $settings);
-
+        $newIndex = $this->createNewIndex($environment);
         $output->writeln(sprintf('New index created, name is "%s"', $newIndex), OutputInterface::VERBOSITY_VERBOSE);
 
         $output->writeln('Feeding new index with data...');
-
         $this->reindexDataTo($newIndex, $output);
 
         $output->writeln('Swapping index aliases...', OutputInterface::VERBOSITY_VERBOSE);
-
         $this->indexService->swapIndexAlias($currentIndex, $newIndex);
 
         $output->writeln(sprintf('Saving new index name - "%s"', $newIndex), OutputInterface::VERBOSITY_VERBOSE);
-
         $this->settingService->setSetting(SettingServiceInterface::CURRENT_INDEX_NAME, $newIndex);
 
         $output->writeln(sprintf('Removing old index - "%s"', $currentIndex), OutputInterface::VERBOSITY_VERBOSE);
-
         $this->indexService->removeIndex($currentIndex);
 
         $output->writeln('Done!');
 
         return 0;
+    }
+
+    private function getEnvironment(InputInterface $input): string
+    {
+        return $input->getParameterOption(['--env', '-e'], getenv('SYMFONY_ENV') ?: 'dev');
+    }
+
+    private function createNewIndex(string $environment): string
+    {
+        $container = $this->getContainer();
+        $indexNameTemplate = $container->getParameter('filipgolonka.elasticsearch_reindex.param.index_name_template');
+
+        $mapping = $container->getParameter('filipgolonka.elasticsearch_reindex.param.mapping');
+        $mapping = $this->evaluateDynamicMapping($mapping, $environment);
+
+        $settings = $container->getParameter('filipgolonka.elasticsearch_reindex.param.settings');
+
+        $newIndex = $this->indexService->createIndex($indexNameTemplate, $mapping, $settings);
+
+        return $newIndex;
+    }
+
+    private function evaluateDynamicMapping(array $mapping, string $environment): array
+    {
+        if (isset($mapping['dynamic'])) {
+            $language = new ExpressionLanguage();
+
+            $mapping['dynamic'] = $language->evaluate(
+                $mapping['dynamic'],
+                [
+                    'environment' => $environment,
+                ]
+            );
+        }
+
+        return $mapping;
     }
 
     private function reindexDataTo(string $newIndex, OutputInterface $output): int
