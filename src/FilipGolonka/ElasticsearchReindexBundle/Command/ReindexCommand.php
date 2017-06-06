@@ -72,7 +72,12 @@ class ReindexCommand extends ContainerAwareCommand
 
     private function getEnvironment(InputInterface $input): string
     {
-        return $input->getParameterOption(['--env', '-e'], getenv('SYMFONY_ENV') ?: 'dev');
+        $env = $input->getParameterOption(['--env', '-e']);
+        if (!$env) {
+            $env = getenv('SYMFONY_ENV') ?: 'dev';
+        }
+
+        return $env;
     }
 
     private function createNewIndex(string $environment): string
