@@ -20,21 +20,25 @@ class ReindexCommand extends ContainerAwareCommand
 
     protected $settingService;
 
+    protected $environment;
+
     public function __construct(
         IndexServiceInterface $indexService,
-        SettingServiceInterface $settingService
+        SettingServiceInterface $settingService,
+        string $environment
     ) {
         parent::__construct();
 
         $this->indexService = $indexService;
         $this->settingService = $settingService;
+        $this->environment = $environment;
     }
 
     protected function configure()
     {
         $this
-            ->setName(self::COMMAND_NAME)
-            ->setDescription(self::COMMAND_DESCRIPTION);
+            ->setName(static::COMMAND_NAME)
+            ->setDescription(static::COMMAND_DESCRIPTION);
     }
 
     /**
@@ -48,9 +52,7 @@ class ReindexCommand extends ContainerAwareCommand
 
         $output->writeln(sprintf('Current index name is "%s"', $currentIndex), OutputInterface::VERBOSITY_VERBOSE);
 
-        $environment = $this->getEnvironment($input);
-
-        $newIndex = $this->createNewIndex($environment);
+        $newIndex = $this->createNewIndex($this->environment);
         $output->writeln(sprintf('New index created, name is "%s"', $newIndex), OutputInterface::VERBOSITY_VERBOSE);
 
         $output->writeln('Feeding new index with data...');
@@ -68,16 +70,6 @@ class ReindexCommand extends ContainerAwareCommand
         $output->writeln('Done!');
 
         return 0;
-    }
-
-    private function getEnvironment(InputInterface $input): string
-    {
-        $env = $input->getParameterOption(['--env', '-e']);
-        if (!$env) {
-            $env = getenv('SYMFONY_ENV') ?: 'dev';
-        }
-
-        return $env;
     }
 
     private function createNewIndex(string $environment): string

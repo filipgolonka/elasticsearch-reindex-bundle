@@ -260,7 +260,7 @@ class FeatureContext implements Context
      */
     public function iLaunchReindexCommand()
     {
-        $command = new ReindexCommand($this->indexService, $this->settingService);
+        $command = new ReindexCommand($this->indexService, $this->settingService, 'environment');
         $command->setContainer($this->container);
 
         $input = new ArrayInput([]);
