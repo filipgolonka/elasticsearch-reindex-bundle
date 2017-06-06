@@ -22,5 +22,6 @@ services:
         arguments:
             - '@filipgolonka.elasticsearch_reindex.service.index'
             - '@filipgolonka.elasticsearch_reindex.service.setting'
+            - '%kernel.environment%'
         tags:
             - { name: console.command }
